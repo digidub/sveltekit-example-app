@@ -1,59 +1,109 @@
-<script context="module">
-	export const prerender = true;
-</script>
-
 <script>
-	import Counter from '$lib/Counter/index.svelte';
+	export const prerender = true;
+	import { onMount } from 'svelte';
+	import { visit } from '../components/stores';
+	import PageSlide from '../components/PageSlide.svelte';
+
+	let phrase = `I taught myself to build websites,
+				such as this one.`;
+	let typedChars = '';
+	let index = 0;
+	let typewriter;
+	let body = false;
+
+	const type = () => {
+		if (!$visit) {
+			if (index < phrase.length) {
+				typedChars += phrase[index];
+				index += 1;
+			} else {
+				clearInterval(typewriter);
+				body = true;
+				visit.set(true);
+			}
+		} else {
+			clearInterval(typewriter);
+			typedChars = phrase;
+			body = true;
+		}
+		return;
+	};
+
+	const typer = () => (typewriter = setInterval(type, 50));
+
+	onMount(() => {
+		typer();
+	});
 </script>
 
-<svelte:head>
-	<title>Home</title>
-</svelte:head>
+<svelte:head><title>Alex Cox • Web Developer • Home</title></svelte:head>
 
-<section>
-	<h1>
-		<div class="welcome">
-			<picture>
-				<source srcset="svelte-welcome.webp" type="image/webp" />
-				<img src="svelte-welcome.png" alt="Welcome" />
-			</picture>
-		</div>
-
-		to your new<br />SvelteKit app
-	</h1>
-
-	<h2>
-		try editing <strong>src/routes/index.svelte</strong>
-	</h2>
-
-	<Counter />
-</section>
+<PageSlide>
+	<main>
+		<h1 class="page-intro">
+			{typedChars}
+		</h1>
+		{#if body}
+			<PageSlide>
+				<div class="skills">
+					<section>
+						<h2>I'm a front-end web developer.</h2>
+						<p>HTML5, CSS3, JavaScript, React, Svelte</p>
+					</section>
+					<section>
+						<h2>...and I also know how things work under the hood.</h2>
+						<p>NPM, Webpack, Git</p>
+					</section>
+					<section>
+						<h2>I'm enthused about learning more</h2>
+						<p>Node.js, Test-driven development</p>
+					</section>
+					<section>
+						<h2>And I'm ready to offer my skills</h2>
+						<p>Why not check out my <a href="/projects">portfolio</a>?</p>
+					</section>
+				</div>
+			</PageSlide>
+		{/if}
+	</main>
+</PageSlide>
 
 <style>
-	section {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		flex: 1;
+	.skills a {
+		color: var(--title-color);
+		font-weight: bold;
+		text-decoration: none;
 	}
 
-	h1 {
-		width: 100%;
+	.skills a:hover {
+		border-bottom: 1px solid var(--title-color);
 	}
 
-	.welcome {
-		position: relative;
-		width: 100%;
-		height: 0;
-		padding: 0 0 calc(100% * 495 / 2048) 0;
+	@media only screen and (min-width: 40em) {
+		.page-intro {
+			margin: auto;
+			max-width: 500px;
+			margin-top: 1em;
+			margin-bottom: 1em;
+		}
+
+		.skills {
+			margin: auto;
+			max-width: 500px;
+		}
 	}
 
-	.welcome img {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		display: block;
+	@media only screen and (min-width: 65em) {
+		.page-intro {
+			margin: auto;
+			max-width: 500px;
+			margin-top: 1em;
+			margin-bottom: 1em;
+		}
+
+		.skills {
+			margin: auto;
+			max-width: 500px;
+		}
 	}
 </style>
